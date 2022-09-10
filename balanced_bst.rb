@@ -53,6 +53,10 @@ class Tree
     end
   end
 
+  def find(val)
+    find_rec(@root, val)
+  end
+
   def delete(val)
     @root = delete_rec(@root, val)
   end
@@ -92,6 +96,19 @@ class Tree
       root = root.left
     end
     minv
+  end
+
+  def find_rec(root, val)
+    if root.nil?
+      root
+    end
+    if val < root.data
+      find_rec(root.left, val)
+    elsif val > root.data
+      find_rec(root.right, val)
+    else
+      root
+    end
   end
 end
 
