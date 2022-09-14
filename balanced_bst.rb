@@ -13,6 +13,7 @@ class Node
   def <=>(other)
     data <=> other.data
   end
+
 end
 
 class Tree
@@ -53,12 +54,22 @@ class Tree
     end
   end
 
+  def delete(val)
+    @root = delete_rec(@root, val)
+  end
+
   def find(val)
     find_rec(@root, val)
   end
 
-  def delete(val)
-    @root = delete_rec(@root, val)
+  def level_order(queue = [@root])
+    unless queue.empty?
+      node_to_print = queue.shift
+      queue << node_to_print.left unless node_to_print.left.nil?
+      queue << node_to_print.right unless node_to_print.right.nil?
+      puts node_to_print.data
+      level_order_rec(queue)
+    end
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -115,3 +126,4 @@ end
 t = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
 
 t.pretty_print
+t.level_order_rec
