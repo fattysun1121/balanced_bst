@@ -62,13 +62,21 @@ class Tree
     find_rec(@root, val)
   end
 
-  def level_order(queue=[@root])
+  def level_order(queue=[@root], result=[], &block)
     unless queue.empty?
-      node_to_print = queue.shift
-      queue << node_to_print.left unless node_to_print.left.nil?
-      queue << node_to_print.right unless node_to_print.right.nil?
-      puts node_to_print.data
-      level_order_rec(queue)
+      data_node = queue.shift
+      queue << data_node.left unless data_node.left.nil?
+      queue << data_node.right unless data_node.right.nil?
+      if block_given?
+        yield(data_node.data)
+        level_order(queue, &block)
+      else
+        result << data_node.data
+        level_order(queue, result)
+      end
+    end
+    unless block_given?
+      result
     end
   end
 
@@ -114,6 +122,21 @@ class Tree
     end
   end
 
+  def height(node)
+    if node.left && node.right
+      1 + [height(node.left), height(node.right)].max
+    elsif node.left.nil? && node.right.nil?
+      0
+    elsif node.left.nil?
+      1 + height(node.right)
+    else
+      1 + height(node.left)
+    end
+  end
+
+  def depth(node)
+  end
+  
   def pretty_print(node=@root, prefix='', is_left=true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
@@ -168,7 +191,4 @@ end
 t = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
 
 t.pretty_print
-p t.inorder
-p t.preorder
-t.preorder { |data| puts data * 2 }
-p t.postorder
+puts t.height(t.find(324))
