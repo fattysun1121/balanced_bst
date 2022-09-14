@@ -134,9 +134,16 @@ class Tree
     end
   end
 
-  def depth(node)
+  def depth(root=@root, node)
+    if node < root
+      1 + depth(root.left, node)
+    elsif node > root
+      1 + depth(root.right, node)
+    else
+      0
+    end
   end
-  
+
   def pretty_print(node=@root, prefix='', is_left=true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
@@ -191,4 +198,4 @@ end
 t = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
 
 t.pretty_print
-puts t.height(t.find(324))
+puts t.depth(t.find(6345))
