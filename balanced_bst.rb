@@ -62,7 +62,7 @@ class Tree
     find_rec(@root, val)
   end
 
-  def level_order(queue = [@root])
+  def level_order(queue=[@root])
     unless queue.empty?
       node_to_print = queue.shift
       queue << node_to_print.left unless node_to_print.left.nil?
@@ -72,7 +72,49 @@ class Tree
     end
   end
 
-  def pretty_print(node = @root, prefix = '', is_left = true)
+  def inorder(node=@root, result=[], &block)
+    # left data right
+    if block_given?
+      inorder(node.left, &block) unless node.left.nil?
+      yield(node.data)
+      inorder(node.right, &block) unless node.right.nil?
+    else
+      inorder(node.left, result) unless node.left.nil?
+      result << node.data
+      inorder(node.right, result) unless node.right.nil?
+      result
+    end
+  end
+
+  def preorder(node=@root, result=[], &block)
+    # data left right 
+    if block_given?
+      yield(node.data)
+      preorder(node.left, &block) unless node.left.nil?
+      preorder(node.right, &block) unless node.right.nil?
+    else
+      result << node.data
+      preorder(node.left, result) unless node.left.nil?
+      preorder(node.right, result) unless node.right.nil?
+      result
+    end
+  end
+
+  def postorder(node=@root, result=[], &block)
+    # left right data
+    if block_given?
+      postorder(node.left, &block) unless node.left.nil?
+      postorder(node.right, &block) unless node.right.nil?
+      yield(node.data)
+    else
+      postorder(node.left, result) unless node.left.nil?     
+      postorder(node.right, result) unless node.right.nil?
+      result << node.data
+      result
+    end
+  end
+
+  def pretty_print(node=@root, prefix='', is_left=true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
     pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
@@ -126,4 +168,7 @@ end
 t = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
 
 t.pretty_print
-t.level_order_rec
+p t.inorder
+p t.preorder
+t.preorder { |data| puts data * 2 }
+p t.postorder
