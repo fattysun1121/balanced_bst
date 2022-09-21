@@ -198,7 +198,7 @@ class Tree
 
   def find_rec(root, val)
     if root.nil?
-      root
+      return root
     end
     if val < root.data
       find_rec(root.left, val)
@@ -210,4 +210,14 @@ class Tree
   end
 end
 
-t = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
+t = Tree.new(Array.new(15) { rand(1..100) })
+puts t.balanced? > -1
+p t.level_order, t.preorder, t.postorder, t.inorder
+5.times do |i|
+  t.insert(i + 100)
+end
+puts t.balanced? > -1
+t.rebalance
+puts t.balanced? > -1
+p t.level_order, t.preorder, t.postorder, t.inorder
+
