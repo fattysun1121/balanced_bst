@@ -19,7 +19,6 @@ end
 class Tree
   def initialize(array)
     @root = build_tree(array)
-    @array = array
   end
 
   def build_tree(array)
@@ -36,7 +35,7 @@ class Tree
 
   def insert(value)
     node = Node.new value
-    unless @array.include?(value)
+    if find(value).nil?
       current_node = @root
       while current_node.left != node && current_node.right != node
         if node > current_node
@@ -144,6 +143,22 @@ class Tree
     end
   end
 
+  def balanced?(root=@root)
+    if root.nil?
+      0
+    else
+      lh = balanced?(root.left)
+      return -1 if lh == -1
+      rh = balanced?(root.right)
+      return -1 if rh == -1
+      return -1 if (lh - rh).abs > 1
+      [lh, rh].max + 1
+    end
+  end
+
+  def rebalance
+    @root = build_tree(level_order)
+  end
   def pretty_print(node=@root, prefix='', is_left=true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
@@ -196,6 +211,3 @@ class Tree
 end
 
 t = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
-
-t.pretty_print
-puts t.depth(t.find(6345))
